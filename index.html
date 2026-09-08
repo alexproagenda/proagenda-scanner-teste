@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProAgenda — Protótipo Scanner</title>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<style>
+body{font-family:system-ui;margin:0;background:#f5f7fb;color:#172033}main{max-width:720px;margin:auto;padding:18px}
+.card{background:#fff;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 3px 16px #0001}
+button{padding:12px 15px;border:0;border-radius:10px;margin:4px;font-weight:700}.primary{background:#2563eb;color:#fff}
+input{padding:11px;border:1px solid #ccd3df;border-radius:10px;width:100%;box-sizing:border-box}
+.row{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:10px 0}.muted{color:#667085}
+.total{font-size:23px;font-weight:800;margin-top:12px}.ok{color:#087443;font-weight:700}.warn{color:#a15c00;font-weight:700}
+</style></head><body><main>
+<h1>📦 ProAgenda — Scanner</h1>
+<p class="muted">Protótipo independente. Não altera o ProAgenda nem usa Firebase.</p>
+<div class="card"><h2>📷 Scanner</h2><p id="status" class="muted">Pronto.</p><div id="reader"></div>
+<button class="primary" onclick="start()">Iniciar câmera</button><button onclick="stop()">Parar</button></div>
+<div class="card"><h2>🧪 Testar sem câmera</h2><input id="code" placeholder="7890000000001">
+<button onclick="add(document.getElementById('code').value.trim())">Adicionar código</button>
+<p class="muted">Use: 7890000000001, 7890000000002 ou 7890000000003</p></div>
+<div class="card"><h2>🛒 Carrinho</h2><div id="cart"></div><div class="total">Total: R$ <span id="total">0,00</span></div>
+<button class="primary" onclick="sale()">Simular venda</button><button onclick="clearCart()">Limpar</button></div>
+<div class="card"><h2>📦 Estoque de teste</h2><div id="stock"></div></div>
+</main>
+<script>
+const products={
+"7890000000001":{name:"Shampoo Profissional",price:30,stock:10},
+"7890000000002":{name:"Máscara Capilar",price:45,stock:5},
+"7890000000003":{name:"Creme de Tratamento",price:25,stock:8}};
+let cart={},reader=null,running=false,last="",lastAt=0;
+const money=n=>n.toLocaleString("pt-BR",{minimumFractionDigits:2});
+function render(){let t=0;let h=Object.keys(cart).length?Object.entries(cart).map(([c,q])=>{let p=products[c];t+=p.price*q;return `<div class="row"><span>${p.name}<br><small>${q} × R$ ${money(p.price)}</small></span><b>R$ ${money(p.price*q)}<br><button onclick="qty('${c}',-1)">−</button><button onclick="qty('${c}',1)">+</button></b></div>`}).join(""):"<p class='muted'>Carrinho vazio.</p>";document.getElementById("cart").innerHTML=h;document.getElementById("total").textContent=money(t);document.getElementById("stock").innerHTML=Object.entries(products).map(([c,p])=>`<div class="row"><span>${p.name}<br><small>${c}</small></span><b>${p.stock}</b></div>`).join("")}
+function add(c){let p=products[c];if(!p){status("⚠️ Produto não cadastrado.");return}let q=cart[c]||0;if(q>=p.stock){status("⚠️ Estoque insuficiente.");return}cart[c]=q+1;status("✓ "+p.name+" adicionado.");render()}
+function qty(c,d){let q=(cart[c]||0)+d;if(q<=0)delete cart[c];else if(q<=products[c].stock)cart[c]=q;else return status("⚠️ Estoque insuficiente.");render()}
+function clearCart(){cart={};render();status("Carrinho limpo.")}
+function sale(){if(!Object.keys(cart).length)return alert("Carrinho vazio.");let t=0;for(let [c,q] of Object.entries(cart)){products[c].stock-=q;t+=products[c].price*q}cart={};render();status("✅ Venda simulada: R$ "+money(t)+". Estoque atualizado.")}
+function status(x){document.getElementById("status").innerHTML=x}
+async function start(){if(running)return;reader=new Html5Qrcode("reader");try{await reader.start({facingMode:"environment"},{fps:10,qrbox:{width:280,height:180}},c=>{let n=Date.now();if(c===last&&n-lastAt<1200)return;last=c;lastAt=n;add(c)},()=>{});running=true;status("📷 Aponte para o código de barras.");}catch(e){status("⚠️ Câmera não abriu. Use HTTPS e permita a câmera.")}}
+async function stop(){if(reader&&running){try{await reader.stop();reader.clear()}catch(e){}}running=false;status("Scanner parado.")}
+render();
+</script></body></html>
