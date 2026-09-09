@@ -38,7 +38,14 @@ document.getElementById("status").innerHTML=`
 
 <input id="folderName" placeholder="Nome da pasta *">
 <input id="folderDescription" placeholder="Descrição (opcional)">
-
+<p><b>🎨 Cor da pasta</b></p>
+<select id="folderColor">
+<option value="purple">🟣 Roxo</option>
+<option value="blue">🔵 Azul</option>
+<option value="orange">🟠 Laranja</option>
+<option value="green">🟢 Verde</option>
+<option value="red">🔴 Vermelho</option>
+</select>
 <br>
 <button class="primary" onclick="saveFolder()">Adicionar Pasta</button>
 <button onclick="status('Pronto.')">Cancelar</button>
