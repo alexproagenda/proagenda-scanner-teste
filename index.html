@@ -30,6 +30,20 @@ const products={
 let cart={},reader=null,running=false,last="",lastAt=0;
 const money=n=>n.toLocaleString("pt-BR",{minimumFractionDigits:2});
 function render(){let t=0;let h=Object.keys(cart).length?Object.entries(cart).map(([c,q])=>{let p=products[c];t+=p.price*q;return `<div class="row"><span>${p.name}<br><small>${q} × R$ ${money(p.price)}</small></span><b>R$ ${money(p.price*q)}<br><button onclick="qty('${c}',-1)">−</button><button onclick="qty('${c}',1)">+</button></b></div>`}).join(""):"<p class='muted'>Carrinho vazio.</p>";document.getElementById("cart").innerHTML=h;document.getElementById("total").textContent=money(t);document.getElementById("stock").innerHTML=Object.entries(products).map(([c,p])=>`<div class="row"><span>${p.name}<br><small>${c}</small></span><b>${p.stock}</b></div>`).join("")}
+function createFolder(){
+document.getElementById("status").innerHTML=`
+<div class="card">
+<h2>📁 Adicionar nova pasta</h2>
+<p class="muted">Organize seus produtos criando pastas personalizadas.</p>
+
+<input id="folderName" placeholder="Nome da pasta *">
+<input id="folderDescription" placeholder="Descrição (opcional)">
+
+<br>
+<button class="primary" onclick="saveFolder()">Adicionar Pasta</button>
+<button onclick="status('Pronto.')">Cancelar</button>
+</div>`;
+}
 function registerProduct(c){
 document.getElementById("status").innerHTML=`
 <div class="card">
