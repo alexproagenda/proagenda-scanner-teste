@@ -46,6 +46,24 @@ document.getElementById("status").innerHTML=`
 <button onclick="status('Pronto.')">Cancelar</button>
 </div>`;
 }
+function saveProduct(c){
+let name=document.getElementById("newName").value.trim();
+let category=document.getElementById("newCategory").value.trim();
+let cost=parseFloat(document.getElementById("newCost").value);
+let price=parseFloat(document.getElementById("newPrice").value);
+let stock=parseInt(document.getElementById("newStock").value);
+let minStock=parseInt(document.getElementById("newMinStock").value);
+
+if(!name||isNaN(cost)||isNaN(price)||isNaN(stock)||isNaN(minStock)){
+status("⚠️ Preencha nome, preços, quantidade e estoque mínimo.");
+return;
+}
+
+products[c]={name:name,category:category,cost:cost,price:price,stock:stock,minStock:minStock};
+
+render();
+status("✅ Produto cadastrado: "+name);
+}
 function add(c){let p=products[c];if(!p){status("⚠️ Produto não cadastrado.<br>Código: "+c+'<br><button class="primary" onclick="registerProduct(\''+c+'\')">Cadastrar produto</button> <button onclick="status(\'Pronto.\')">Cancelar</button>');return}let q=cart[c]||0;if(q>=p.stock){status("⚠️ Estoque insuficiente.");return}cart[c]=q+1;status("✓ "+p.name+" adicionado.");render()}
 function qty(c,d){let q=(cart[c]||0)+d;if(q<=0)delete cart[c];else if(q<=products[c].stock)cart[c]=q;else return status("⚠️ Estoque insuficiente.");render()}
 function clearCart(){cart={};render();status("Carrinho limpo.")}
