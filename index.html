@@ -31,7 +31,20 @@ let cart={},reader=null,running=false,last="",lastAt=0;
 const money=n=>n.toLocaleString("pt-BR",{minimumFractionDigits:2});
 function render(){let t=0;let h=Object.keys(cart).length?Object.entries(cart).map(([c,q])=>{let p=products[c];t+=p.price*q;return `<div class="row"><span>${p.name}<br><small>${q} × R$ ${money(p.price)}</small></span><b>R$ ${money(p.price*q)}<br><button onclick="qty('${c}',-1)">−</button><button onclick="qty('${c}',1)">+</button></b></div>`}).join(""):"<p class='muted'>Carrinho vazio.</p>";document.getElementById("cart").innerHTML=h;document.getElementById("total").textContent=money(t);document.getElementById("stock").innerHTML=Object.entries(products).map(([c,p])=>`<div class="row"><span>${p.name}<br><small>${c}</small></span><b>${p.stock}</b></div>`).join("")}
 function registerProduct(c){
-status("📦 Cadastro iniciado para o código: "+c);
+document.getElementById("status").innerHTML=`
+<div class="card">
+<h2>📦 Cadastrar produto</h2>
+<p><b>Código de barras:</b> ${c}</p>
+<input id="newName" placeholder="Nome do produto">
+<input id="newCategory" placeholder="Categoria / Pasta">
+<input id="newCost" type="number" step="0.01" placeholder="Preço pago">
+<input id="newPrice" type="number" step="0.01" placeholder="Preço de venda">
+<input id="newStock" type="number" placeholder="Quantidade inicial">
+<input id="newMinStock" type="number" placeholder="Estoque mínimo">
+<br>
+<button class="primary" onclick="saveProduct('${c}')">Salvar produto</button>
+<button onclick="status('Pronto.')">Cancelar</button>
+</div>`;
 }
 function add(c){let p=products[c];if(!p){status("⚠️ Produto não cadastrado.<br>Código: "+c+'<br><button class="primary" onclick="registerProduct(\''+c+'\')">Cadastrar produto</button> <button onclick="status(\'Pronto.\')">Cancelar</button>');return}let q=cart[c]||0;if(q>=p.stock){status("⚠️ Estoque insuficiente.");return}cart[c]=q+1;status("✓ "+p.name+" adicionado.");render()}
 function qty(c,d){let q=(cart[c]||0)+d;if(q<=0)delete cart[c];else if(q<=products[c].stock)cart[c]=q;else return status("⚠️ Estoque insuficiente.");render()}
