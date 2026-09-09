@@ -57,7 +57,7 @@ document.getElementById("status").innerHTML=`
 <h2>📦 Cadastrar produto</h2>
 <p><b>Código de barras:</b> ${c}</p>
 <input id="newName" placeholder="Nome do produto">
-<select id="newCategory">
+<select id="newCategory" onchange="if(this.value==='__nova__'){createFolder();this.value=''}">
 <option value="">📁 Escolher pasta</option>
 <option value="Livros">📚 Livros</option>
 <option value="Beleza">💄 Beleza</option>
