@@ -28,6 +28,7 @@ const products={
 "7890000000002":{name:"Máscara Capilar",price:45,stock:5},
 "7890000000003":{name:"Creme de Tratamento",price:25,stock:8}};
 let cart={},reader=null,running=false,last="",lastAt=0;
+let folders=[];
 const money=n=>n.toLocaleString("pt-BR",{minimumFractionDigits:2});
 function render(){let t=0;let h=Object.keys(cart).length?Object.entries(cart).map(([c,q])=>{let p=products[c];t+=p.price*q;return `<div class="row"><span>${p.name}<br><small>${q} × R$ ${money(p.price)}</small></span><b>R$ ${money(p.price*q)}<br><button onclick="qty('${c}',-1)">−</button><button onclick="qty('${c}',1)">+</button></b></div>`}).join(""):"<p class='muted'>Carrinho vazio.</p>";document.getElementById("cart").innerHTML=h;document.getElementById("total").textContent=money(t);document.getElementById("stock").innerHTML=Object.entries(products).map(([c,p])=>`<div class="row"><span>${p.name}<br><small>${c}</small></span><b>${p.stock}</b></div>`).join("")}
 function createFolder(){
@@ -64,6 +65,26 @@ document.getElementById("status").innerHTML=`
 <button class="primary" onclick="saveFolder()">Adicionar Pasta</button>
 <button onclick="status('Pronto.')">Cancelar</button>
 </div>`;
+}
+function saveFolder(){
+let name=document.getElementById("folderName").value.trim();
+let description=document.getElementById("folderDescription").value.trim();
+let color=document.getElementById("folderColor").value;
+let icon=document.getElementById("folderIcon").value;
+
+if(!name){
+status("⚠️ Digite o nome da pasta.");
+return;
+}
+
+folders.push({
+name:name,
+description:description,
+color:color,
+icon:icon
+});
+
+status("✅ Pasta criada: "+icon+" "+name);
 }
 function registerProduct(c){
 document.getElementById("status").innerHTML=`
