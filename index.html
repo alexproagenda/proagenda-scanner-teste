@@ -90,6 +90,11 @@ registerProduct(currentBarcode);
 }
 function registerProduct(c){
 currentBarcode=c;
+
+let customFolders=folders.map(f=>`
+<option value="${f.name}">${f.icon} ${f.name}</option>
+`).join("");
+
 document.getElementById("status").innerHTML=`
 <div class="card">
 <h2>📦 Cadastrar produto</h2>
@@ -107,6 +112,7 @@ document.getElementById("status").innerHTML=`
 <option value="Esportes">⚽ Esportes</option>
 <option value="Brinquedos">🧸 Brinquedos</option>
 <option value="Geral">📁 Geral</option>
+${customFolders}
 <option value="__nova__">➕ Criar nova pasta</option>
 </select>
 
@@ -119,7 +125,7 @@ document.getElementById("status").innerHTML=`
 <button class="primary" onclick="saveProduct('${c}')">Salvar produto</button>
 <button onclick="status('Pronto.')">Cancelar</button>
 </div>`;
-}
+  }
 function saveProduct(c){
 let name=document.getElementById("newName").value.trim();
 let category=document.getElementById("newCategory").value.trim();
