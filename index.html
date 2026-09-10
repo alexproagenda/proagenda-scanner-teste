@@ -185,7 +185,42 @@ function selectPayment(method){
 selectedPayment=method;
 document.getElementById("paymentSelected").textContent="✅ Pagamento selecionado: "+method;
 }
-function sale(){if(!Object.keys(cart).length)return alert("Carrinho vazio.");let t=0;for(let [c,q] of Object.entries(cart)){products[c].stock-=q;t+=products[c].price*q}cart={};render();status("✅ Venda simulada: R$ "+money(t)+". Estoque atualizado.")}
+function confirmPayment(){
+if(!Object.keys(cart).length){
+alert("Carrinho vazio.");
+return;
+}
+
+if(!selectedPayment){
+alert("Selecione o método de pagamento.");
+return;
+}
+
+let t=0;
+
+for(let [c,q] of Object.entries(cart)){
+products[c].stock-=q;
+t+=products[c].price*q;
+}
+
+localStorage.setItem("proagenda_products",JSON.stringify(products));
+
+let paymentMethod=selectedPayment;
+
+cart={};
+selectedPayment="";
+
+render();
+
+document.getElementById("status").innerHTML=`
+<div class="card">
+<h2 class="ok">✅ Venda realizada!</h2>
+<p><b>Método de pagamento:</b> ${paymentMethod}</p>
+<p><b>Total:</b> R$ ${money(t)}</p>
+
+<button class="primary" onclick="status('Pronto.')">Concluir</button>
+</div>`;
+}
 function status(x){document.getElementById("status").innerHTML=x}
 async function start(){if(running)return;reader=new Html5Qrcode("reader");try{await reader.start({facingMode:"environment"},{fps:10,qrbox:{width:280,height:180}},c=>{let n=Date.now();if(c===last&&n-lastAt<1200)return;last=c;lastAt=n;add(c)},()=>{});running=true;status("📷 Aponte para o código de barras.");}catch(e){status("⚠️ Câmera não abriu. Use HTTPS e permita a câmera.")}}
 async function stop(){if(reader&&running){try{await reader.stop();reader.clear()}catch(e){}}running=false;status("Scanner parado.")}
