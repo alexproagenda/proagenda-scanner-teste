@@ -133,8 +133,9 @@ ${customFolders}
 function saveProduct(c){
 let name=document.getElementById("newName").value.trim();
 let category=document.getElementById("newCategory").value.trim();
-let cost=parseFloat(document.getElementById("newCost").value);
-let price=parseFloat(document.getElementById("newPrice").value);
+let cost=parseFloat(document.getElementById("newCost").value.replace(",","."));
+let price=parseFloat(document.getElementById("newPrice").value.replace(",","."));
+
 let stock=parseInt(document.getElementById("newStock").value);
 let minStock=parseInt(document.getElementById("newMinStock").value);
 
