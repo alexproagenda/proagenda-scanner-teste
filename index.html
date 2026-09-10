@@ -19,7 +19,7 @@ input{padding:11px;border:1px solid #ccd3df;border-radius:10px;width:100%;box-si
 <button onclick="add(document.getElementById('code').value.trim())">Adicionar código</button>
 <p class="muted">Use: 7890000000001, 7890000000002 ou 7890000000003</p></div>
 <div class="card"><h2>🛒 Carrinho</h2><div id="cart"></div><div class="total">Total: R$ <span id="total">0,00</span></div>
-<button class="primary" onclick="sale()">Simular venda</button><button onclick="clearCart()">Limpar</button></div>
+<button class="primary" onclick="payment()">Próximo</button><button onclick="clearCart()">Limpar</button>
 <div class="card"><h2>📦 Estoque de teste</h2><div id="stock"></div></div>
 </main>
 <script>
@@ -152,6 +152,35 @@ status("✅ Produto cadastrado: "+name);
 function add(c){let p=products[c];if(!p){status("⚠️ Produto não cadastrado.<br>Código: "+c+'<br><button class="primary" onclick="registerProduct(\''+c+'\')">Cadastrar produto</button> <button onclick="status(\'Pronto.\')">Cancelar</button>');return}let q=cart[c]||0;if(q>=p.stock){status("⚠️ Estoque insuficiente.");return}cart[c]=q+1;status("✓ "+p.name+" adicionado.");render()}
 function qty(c,d){let q=(cart[c]||0)+d;if(q<=0)delete cart[c];else if(q<=products[c].stock)cart[c]=q;else return status("⚠️ Estoque insuficiente.");render()}
 function clearCart(){cart={};render();status("Carrinho limpo.")}
+function payment(){
+if(!Object.keys(cart).length){
+alert("Carrinho vazio.");
+return;
+}
+
+let t=0;
+for(let [c,q] of Object.entries(cart)){
+t+=products[c].price*q;
+}
+
+document.getElementById("status").innerHTML=`
+<div class="card">
+<h2>💳 Método de Pagamento</h2>
+<h3>Valor Total</h3>
+<div class="total">R$ ${money(t)}</div>
+<p class="muted">Selecione o método de pagamento</p>
+
+<button onclick="selectPayment('DÉBITO')">DÉBITO</button>
+<button onclick="selectPayment('CRÉDITO')">CRÉDITO</button>
+<button onclick="selectPayment('PIX')">PIX</button>
+
+<p id="paymentSelected" class="ok"></p>
+
+<br>
+<button class="primary" onclick="confirmPayment()">Finalizar</button>
+<button onclick="status('Pronto.')">Cancelar</button>
+</div>`;
+}
 function sale(){if(!Object.keys(cart).length)return alert("Carrinho vazio.");let t=0;for(let [c,q] of Object.entries(cart)){products[c].stock-=q;t+=products[c].price*q}cart={};render();status("✅ Venda simulada: R$ "+money(t)+". Estoque atualizado.")}
 function status(x){document.getElementById("status").innerHTML=x}
 async function start(){if(running)return;reader=new Html5Qrcode("reader");try{await reader.start({facingMode:"environment"},{fps:10,qrbox:{width:280,height:180}},c=>{let n=Date.now();if(c===last&&n-lastAt<1200)return;last=c;lastAt=n;add(c)},()=>{});running=true;status("📷 Aponte para o código de barras.");}catch(e){status("⚠️ Câmera não abriu. Use HTTPS e permita a câmera.")}}
