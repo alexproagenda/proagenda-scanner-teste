@@ -144,7 +144,7 @@ return;
 }
 
 products[c]={name:name,category:category,cost:cost,price:price,stock:stock,minStock:minStock};
-
+localStorage.setItem("proagenda_products",JSON.stringify(products));
 render();
 status("✅ Produto cadastrado: "+name);
 }
