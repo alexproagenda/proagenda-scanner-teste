@@ -27,6 +27,10 @@ const products={
 "7890000000001":{name:"Shampoo Profissional",price:30,stock:10},
 "7890000000002":{name:"Máscara Capilar",price:45,stock:5},
 "7890000000003":{name:"Creme de Tratamento",price:25,stock:8}};
+const savedProducts=localStorage.getItem("proagenda_products");
+if(savedProducts){
+Object.assign(products,JSON.parse(savedProducts));
+}
 let cart={},reader=null,running=false,last="",lastAt=0;
 let folders=[];
 let currentBarcode="";
