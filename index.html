@@ -31,7 +31,7 @@ const savedProducts=localStorage.getItem("proagenda_products");
 if(savedProducts){
 Object.assign(products,JSON.parse(savedProducts));
 }
-let cart={},reader=null,running=false,last="",lastAt=0;
+let cart={},reader=null,running=false,last="",lastAt=0,selectedPayment="";
 let folders=[];
 let currentBarcode="";
 const money=n=>n.toLocaleString("pt-BR",{minimumFractionDigits:2});
@@ -180,6 +180,10 @@ document.getElementById("status").innerHTML=`
 <button class="primary" onclick="confirmPayment()">Finalizar</button>
 <button onclick="status('Pronto.')">Cancelar</button>
 </div>`;
+}
+function selectPayment(method){
+selectedPayment=method;
+document.getElementById("paymentSelected").textContent="✅ Pagamento selecionado: "+method;
 }
 function sale(){if(!Object.keys(cart).length)return alert("Carrinho vazio.");let t=0;for(let [c,q] of Object.entries(cart)){products[c].stock-=q;t+=products[c].price*q}cart={};render();status("✅ Venda simulada: R$ "+money(t)+". Estoque atualizado.")}
 function status(x){document.getElementById("status").innerHTML=x}
