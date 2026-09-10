@@ -33,6 +33,7 @@ if(savedProducts){
 Object.assign(products,JSON.parse(savedProducts));
 }
 let cart={},reader=null,running=false,last="",lastAt=0,selectedPayment="";
+let lastSale=null;
 let folders=[];
 let currentBarcode="";
 const money=n=>n.toLocaleString("pt-BR",{minimumFractionDigits:2});
@@ -219,6 +220,13 @@ let paymentMethod=selectedPayment;
 let now=new Date();
 let dateTime=now.toLocaleString("pt-BR");
 
+lastSale={
+dateTime:dateTime,
+paymentMethod:paymentMethod,
+soldItems:soldItems,
+total:t
+};
+
 cart={};
 selectedPayment="";
 
@@ -254,6 +262,11 @@ Total: R$ ${money(t)}
 </div>`;
 }
 function generatePDF(){
+if(!lastSale){
+alert("Nenhuma venda disponível para gerar o comprovante.");
+return;
+}
+
 if(!window.jspdf){
 alert("Não foi possível carregar o gerador de PDF.");
 return;
@@ -270,8 +283,8 @@ doc.text("ProAgenda",105,28,{align:"center"});
 
 doc.line(20,34,190,34);
 
-doc.text("Data e hora: "+dateTime,20,45);
-doc.text("Método de pagamento: "+paymentMethod,20,53);
+doc.text("Data e hora: "+lastSale.dateTime,20,45);
+doc.text("Método de pagamento: "+lastSale.paymentMethod,20,53);
 
 doc.setFontSize(13);
 doc.text("Produtos",20,68);
@@ -279,7 +292,7 @@ doc.text("Produtos",20,68);
 let y=78;
 let totalItems=0;
 
-soldItems.forEach(item=>{
+lastSale.soldItems.forEach(item=>{
 let subtotal=item.quantity*item.price;
 totalItems+=item.quantity;
 
@@ -297,7 +310,7 @@ doc.setFontSize(11);
 doc.text("Total de itens: "+totalItems,20,y+12);
 
 doc.setFontSize(15);
-doc.text("TOTAL: R$ "+money(t),20,y+24);
+doc.text("TOTAL: R$ "+money(lastSale.total),20,y+24);
 
 doc.setFontSize(9);
 doc.text("Comprovante gerado pelo ProAgenda",105,y+38,{align:"center"});
