@@ -86,11 +86,14 @@ icon:icon
 
 status("✅ Pasta criada: "+icon+" "+name);
 }
+function registerProduct(c){
 document.getElementById("status").innerHTML=`
 <div class="card">
 <h2>📦 Cadastrar produto</h2>
 <p><b>Código de barras:</b> ${c}</p>
+
 <input id="newName" placeholder="Nome do produto">
+
 <select id="newCategory" onchange="if(this.value==='__nova__'){createFolder();this.value=''}">
 <option value="">📁 Escolher pasta</option>
 <option value="Livros">📚 Livros</option>
@@ -101,12 +104,14 @@ document.getElementById("status").innerHTML=`
 <option value="Esportes">⚽ Esportes</option>
 <option value="Brinquedos">🧸 Brinquedos</option>
 <option value="Geral">📁 Geral</option>
-<option value="__nova__" onclick="createFolder()">➕ Criar nova pasta</option>
+<option value="__nova__">➕ Criar nova pasta</option>
 </select>
+
 <input id="newCost" type="text" inputmode="decimal" placeholder="Preço pago (ex.: 20,00)">
 <input id="newPrice" type="text" inputmode="decimal" placeholder="Preço de venda (ex.: 29,90)">
 <input id="newStock" type="number" placeholder="Quantidade inicial">
 <input id="newMinStock" type="number" placeholder="Estoque mínimo">
+
 <br>
 <button class="primary" onclick="saveProduct('${c}')">Salvar produto</button>
 <button onclick="status('Pronto.')">Cancelar</button>
