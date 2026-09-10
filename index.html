@@ -197,15 +197,26 @@ return;
 }
 
 let t=0;
+let soldItems=[];
 
 for(let [c,q] of Object.entries(cart)){
+let p=products[c];
+
+soldItems.push({
+name:p.name,
+quantity:q,
+price:p.price
+});
+
 products[c].stock-=q;
-t+=products[c].price*q;
+t+=p.price*q;
 }
 
 localStorage.setItem("proagenda_products",JSON.stringify(products));
 
 let paymentMethod=selectedPayment;
+let now=new Date();
+let dateTime=now.toLocaleString("pt-BR");
 
 cart={};
 selectedPayment="";
@@ -215,10 +226,30 @@ render();
 document.getElementById("status").innerHTML=`
 <div class="card">
 <h2 class="ok">✅ Venda realizada!</h2>
-<p><b>Método de pagamento:</b> ${paymentMethod}</p>
-<p><b>Total:</b> R$ ${money(t)}</p>
 
-<button class="primary" onclick="status('Pronto.')">Concluir</button>
+<p><b>📅 Data e hora:</b><br>${dateTime}</p>
+
+<p><b>💳 Método de pagamento:</b><br>${paymentMethod}</p>
+
+<h3>📦 Produtos</h3>
+
+${soldItems.map(item=>`
+<div class="row">
+<span>
+${item.name}<br>
+<small>${item.quantity} × R$ ${money(item.price)}</small>
+</span>
+<b>R$ ${money(item.quantity*item.price)}</b>
+</div>
+`).join("")}
+
+<div class="total">
+Total: R$ ${money(t)}
+</div>
+
+<button class="primary" onclick="status('Pronto.')">🧾 Gerar PDF</button>
+<button onclick="status('Pronto.')">Concluir</button>
+
 </div>`;
 }
 function status(x){document.getElementById("status").innerHTML=x}
